@@ -18,9 +18,27 @@ export async function initDB() {
       style TEXT,
       script TEXT,
       insights TEXT,
+      user_id INTEGER,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `)
+
+  // Ensure users table exists
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE,
+      password_hash TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `)
+
+  // If the ideas table was created earlier without user_id, try to add the column (safe-guard)
+  try {
+    await db.exec(`ALTER TABLE ideas ADD COLUMN user_id INTEGER;`)
+  } catch (e) {
+    // ignore if column already exists or ALTER fails
+  }
 
   return db
 }

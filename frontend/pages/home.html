@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Home - AI Content Creator</title>
+  <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+<header class="header-bar">
+  <div class="left">
+    <button class="menu-button" id="sidebarToggle" aria-expanded="false" aria-controls="sidebar">
+      <img src="../styles/logo.svg" alt="Logo" class="sidebar-logo">
+    </button>
+  </div>
+
+  <div class="right">
+    <button class="auth-button" id="loginBtn">Iniciar sesión</button>
+    <button class="auth-button" id="registerBtn">Registrarse</button>
+  </div>
+
+  <aside id="sidebar" class="sidebar collapsed" aria-hidden="false">
+    <ul class="sidebar-list">
+      <li id="newScript">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="icon-svg"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        </span>
+        <span class="label">Nuevo guión</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div id="sidebarFooterLoggedOut">
+        <p class="sidebar-note">Inicia sesión para poder guardar chats y generar insights personalizados sobre rendimiento, temas y oportunidades.</p>
+        <button class="auth-button" id="sidebarLoginBtn">Iniciar sesión</button>
+      </div>
+      <div id="sidebarFooterLogged" style="display:none">
+        <div class="user-info">Hola, <span id="usernameDisplay"></span></div>
+        <button class="auth-button" id="sidebarLogoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+  </aside>
+</header>
+
+<div class="container">
+  <h1>Generate Video Script</h1>
+
+  <input id="niche" placeholder="Niche"><br>
+  <input id="audience" placeholder="Audience"><br>
+  <input id="platform" placeholder="Platform"><br>
+  <input id="goal" placeholder="Goal"><br>
+  <input id="style" placeholder="Style"><br>
+
+  <button onclick="generate()">Generate Script</button>
+
+  <pre id="result"></pre>
+</div>
+
+<script src="../js/app.js"></script>
+
+<!-- Modal: Warn about losing current script when starting a new chat while logged out -->
+<div id="unsavedModal" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="unsavedTitle">
+    <h3 id="unsavedTitle">Vas a perder el guión actual</h3>
+    <p>Si no inicias sesión, el guión actual no se guardará. Inicia sesión para conservarlo. ¿No tienes cuenta? Regístrate.</p>
+    <div class="actions">
+      <button id="modalRegister" class="auth-button">Regístrate</button>
+      <button id="modalLogin" class="auth-button">Iniciar sesión</button>
+      <button id="modalDiscard" class="auth-button secondary">Descartar y continuar</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

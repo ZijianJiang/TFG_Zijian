@@ -14,16 +14,34 @@ export default function generateScript(db){
 
       const result = await generateContent(prompt)
 
+      // Try to associate with user if Authorization header present
+      let userId = null
+      try {
+        const auth = req.headers.authorization
+        if (auth && auth.startsWith('Bearer ')) {
+          const token = auth.split(' ')[1]
+          // lazy require jwt to avoid adding at top; package.json has dependency
+          const jwt = await import('jsonwebtoken')
+          const secret = process.env.JWT_SECRET || 'devsecret'
+          const payload = jwt.verify(token, secret)
+          if (payload && payload.id) userId = payload.id
+        }
+      } catch (e) {
+        // invalid token — ignore and continue without user
+        userId = null
+      }
+
       await db.run(
-        `INSERT INTO ideas (niche,audience,platform,goal,style,script)
-         VALUES (?,?,?,?,?,?)`,
+        `INSERT INTO ideas (niche,audience,platform,goal,style,script,user_id)
+         VALUES (?,?,?,?,?,?,?)`,
         [
           req.body.niche,
           req.body.audience,
           req.body.platform,
           req.body.goal,
           req.body.style,
-          result
+          result,
+          userId
         ]
       )
 
@@ -36,6 +54,39 @@ export default function generateScript(db){
       res.status(500).json({
         error: error.message
       })
+    }
+  })
+
+  // Save a provided script directly (requires auth)
+  router.post('/save', async (req, res) => {
+    try {
+      const script = req.body.script
+      if (!script) return res.status(400).json({ error: 'script required' })
+
+      let userId = null
+      try {
+        const auth = req.headers.authorization
+        if (auth && auth.startsWith('Bearer ')) {
+          const token = auth.split(' ')[1]
+          const jwt = await import('jsonwebtoken')
+          const secret = process.env.JWT_SECRET || 'devsecret'
+          const payload = jwt.verify(token, secret)
+          if (payload && payload.id) userId = payload.id
+        }
+      } catch (e) {
+        userId = null
+      }
+
+      await db.run(
+        `INSERT INTO ideas (niche,audience,platform,goal,style,script,user_id)
+         VALUES (?,?,?,?,?,?,?)`,
+        [null, null, null, null, null, script, userId]
+      )
+
+      res.json({ ok: true })
+    } catch (e) {
+      console.error('SAVE ERROR', e)
+      res.status(500).json({ error: 'internal' })
     }
   })
 

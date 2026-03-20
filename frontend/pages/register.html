@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Registro - AI Content Creator</title>
+  <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+  <main style="max-width:480px;margin:80px auto;padding:20px;background:#fff;border-radius:8px;">
+    <h2>Registro</h2>
+    <div>
+      <label>Usuario</label>
+      <input id="registerUsername" placeholder="Usuario">
+    </div>
+    <div>
+      <label>Contraseña</label>
+      <input id="registerPassword" placeholder="Contraseña" type="password">
+    </div>
+    <div style="margin-top:12px;">
+      <button id="doRegister" class="auth-button">Crear cuenta</button>
+      <a href="login.html" style="margin-left:8px;">Entrar</a>
+      <a href="home.html" style="float:right">Volver</a>
+    </div>
+    <p id="msg" style="color:red;margin-top:8px"></p>
+  </main>
+
+  <script>
+    document.getElementById('doRegister').addEventListener('click', async () => {
+      const u = document.getElementById('registerUsername').value
+      const p = document.getElementById('registerPassword').value
+      if (!u || !p) return document.getElementById('msg').innerText = 'Introduce usuario y contraseña'
+      try {
+        const resp = await fetch('http://localhost:3000/auth/register', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ username: u, password: p })
+        })
+        const data = await resp.json()
+        if (!resp.ok) throw new Error(data.error || 'register failed')
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('username', data.username)
+        location.href = 'home.html'
+      } catch (e) {
+        document.getElementById('msg').innerText = e.message
+      }
+    })
+  </script>
+</body>
+</html>

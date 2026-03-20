@@ -1,0 +1,180 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#result {
+  white-space: pre-wrap;
+  background: #eee;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+/* Header */
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  z-index: 1000;
+}
+
+.header-bar .left, .header-bar .right {
+  display: flex;
+  align-items: center;
+}
+
+
+.menu-button {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px 10px;
+}
+
+/* Sidebar */
+
+.sidebar {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  height: calc(100% - 56px);
+  width: 72px; /* collapsed width */
+  background: #0b1220;
+  color: #fff;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.12);
+  transition: width 220ms ease-in-out, background 200ms;
+  z-index: 1100;
+  padding: 12px 8px;
+  overflow: hidden;
+}
+
+.sidebar.open {
+  width: 260px;
+  background: #fff;
+  color: #111;
+}
+
+.sidebar-list { list-style: none; padding: 0; margin-top: 12px; }
+.sidebar-list li { padding: 10px 8px; cursor: pointer; border-radius: 6px; display:flex; align-items:center; gap:12px; }
+.sidebar-list li:hover { background: rgba(255,255,255,0.04); }
+
+.sidebar .icon { width: 36px; height: 36px; display:flex; align-items:center; justify-content:center; background: transparent; border-radius: 8px; }
+.sidebar .icon .icon-svg { width:18px; height:18px; color: currentColor; }
+.sidebar .label { font-size: 15px; transition: opacity 160ms ease, transform 160ms ease; }
+
+/* Collapsed state: hide labels and adjust icon colors (use opacity for smooth fade) */
+.sidebar.collapsed {
+  width: 72px;
+}
+.sidebar.collapsed .label { opacity: 0; transform: translateX(-8px); }
+.sidebar.collapsed .icon { background: transparent; }
+.sidebar.collapsed .icon .icon-svg { color: #fff; }
+
+/* When expanded (open), show labels and different icon background */
+.sidebar.open .icon { background: #eef6ff; }
+.sidebar.open .icon .icon-svg { color: #3182ce; }
+.sidebar.open .label { opacity: 1; transform: translateX(0); }
+
+/* Sidebar footer (login prompt / account area) */
+.sidebar-footer {
+  position: absolute;
+  bottom: 48px; /* moved up to avoid OS taskbar and not too low */
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* center horizontally */
+  transition: opacity 180ms ease, transform 180ms ease;
+  opacity: 1;
+}
+.sidebar-footer .sidebar-note {
+  font-size: 13px;
+  line-height: 1.2;
+  margin: 0 0 8px 0;
+  color: rgba(255,255,255,0.9);
+  transition: color 180ms ease;
+}
+.sidebar .sidebar-footer .auth-button {
+  /* make button a fixed width to avoid touching edges and center it */
+  width: 180px;
+}
+
+/* Collapsed: fade footer out rather than removing it (prevents overlap issues) */
+.sidebar.collapsed .sidebar-footer { opacity: 0; transform: translateY(6px); pointer-events: none; }
+.sidebar.open .sidebar-footer { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+.user-info { font-weight: 600; margin-bottom: 8px; }
+
+/* Modal for unsaved-warning */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 1200; }
+.modal-backdrop.open { display: flex; }
+.modal { background: #fff; color: #111; padding: 18px; border-radius: 10px; max-width: 420px; width: calc(100% - 40px); box-shadow: 0 8px 30px rgba(0,0,0,0.25); transform: translateY(8px); opacity: 0; transition: opacity 180ms, transform 180ms; }
+.modal-backdrop.open .modal { transform: translateY(0); opacity: 1; }
+.modal h3 { margin: 0 0 8px 0; font-size: 18px; }
+.modal p { margin: 0 0 12px 0; color: #444; }
+.modal .actions { display:flex; gap:8px; justify-content:flex-end; }
+.modal .actions .auth-button { width: auto; padding: 8px 12px; }
+.modal .secondary { background: transparent; border: 1px solid #ccc; color: #333; }
+
+.auth-form input { display:block; width:100%; padding:8px; margin-bottom:6px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:inherit }
+.auth-form button { margin-right:6px }
+.auth-form input::placeholder { color: rgba(255,255,255,0.7) }
+
+/* When sidebar is expanded, inputs should look normal */
+.sidebar.open .auth-form input { background: #fff; color: #111; border: 1px solid #ddd }
+.sidebar.open .auth-form input::placeholder { color: #666 }
+
+@media (min-width: 800px) {
+  .sidebar.open ~ .container { margin-left: 280px; transition: margin 220ms; }
+  .sidebar.collapsed ~ .container { margin-left: 92px; transition: margin 220ms; }
+}
+
+/* Hamburger icon style */
+.hamburger-svg { color: #fff; }
+.sidebar.open ~ header .hamburger-svg { color: #111; }
+
+/* Sidebar toggle logo */
+.sidebar-logo { width: 22px; height: 22px; display: block; }
+
+/* When sidebar is visible, optionally shift main container a bit on wide screens */
+@media (min-width: 800px) {
+  .sidebar.open ~ .container { margin-left: 280px; transition: margin 220ms; }
+}
+
+/* When expanded, ensure footer text and buttons are readable on white bg */
+.sidebar.open .sidebar-note { color: #333; }
+.sidebar.open .sidebar-footer .auth-button { background: #3182ce; color: #fff; border-color: #2b6cb0 }
+
+.auth-button {
+  margin-left: 8px;
+  padding: 8px 12px;
+  border: 1px solid #2b6cb0;
+  background: #3182ce;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.auth-button:hover { opacity: 0.95; }
+
+/* Adjust page content under fixed header */
+.container { margin-top: 90px; }

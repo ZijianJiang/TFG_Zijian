@@ -1,5 +1,6 @@
 #Folders
 backend/node_modules/
+backend/database/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
