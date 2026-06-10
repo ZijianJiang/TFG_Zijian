@@ -2,58 +2,346 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Home - AI Content Creator</title>
+  <title>Home - ViralScript</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/style.css">
 </head>
 <body>
 <header class="header-bar">
   <div class="left">
     <button class="menu-button" id="sidebarToggle" aria-expanded="false" aria-controls="sidebar">
-      <img src="../styles/logo.svg" alt="Logo" class="sidebar-logo">
+      <img src="../styles/logo.svg" alt="ViralScript logo" class="sidebar-logo">
     </button>
+    <div class="brand">
+      <span class="app-title">ViralScript</span>
+    </div>
   </div>
 
   <div class="right">
-    <button class="auth-button" id="loginBtn">Iniciar sesión</button>
-    <button class="auth-button" id="registerBtn">Registrarse</button>
+    <button class="auth-button ghost" id="loginBtn">Iniciar sesión</button>
+    <button class="auth-button primary" id="registerBtn">Registrarse</button>
   </div>
 
-  <aside id="sidebar" class="sidebar collapsed" aria-hidden="false">
-    <ul class="sidebar-list">
-      <li id="newScript">
-        <span class="icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="icon-svg"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        </span>
-        <span class="label">Nuevo guión</span>
-      </li>
-    </ul>
-
-    <div class="sidebar-footer">
-      <div id="sidebarFooterLoggedOut">
-        <p class="sidebar-note">Inicia sesión para poder guardar chats y generar insights personalizados sobre rendimiento, temas y oportunidades.</p>
-        <button class="auth-button" id="sidebarLoginBtn">Iniciar sesión</button>
-      </div>
-      <div id="sidebarFooterLogged" style="display:none">
-        <div class="user-info">Hola, <span id="usernameDisplay"></span></div>
-        <button class="auth-button" id="sidebarLogoutBtn">Cerrar sesión</button>
-      </div>
-    </div>
-  </aside>
 </header>
 
+<div id="appShell" class="app-shell sidebar-collapsed">
+<aside id="sidebar" class="sidebar collapsed" aria-hidden="false">
+  <ul class="sidebar-list">
+    <li id="newScript" data-tooltip="Nuevo guión">
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="icon-svg"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </span>
+      <span class="label">Nuevo guión</span>
+    </li>
+  </ul>
+
+  <div class="sidebar-history" id="scriptHistorySection" aria-label="Historial de guiones">
+    <div class="sidebar-history-head">
+      <span class="sidebar-history-label">Tus guiones</span>
+    </div>
+    <div id="scriptHistoryEmpty" class="sidebar-history-empty">Aún no has generado guiones.</div>
+    <ul id="scriptHistoryList" class="sidebar-history-list"></ul>
+  </div>
+
+  <div class="sidebar-footer">
+    <div id="sidebarFooterLoggedOut">
+      <p class="sidebar-note">Inicia sesión para poder guardar chats y generar insights personalizados sobre rendimiento, temas y oportunidades.</p>
+      <button class="auth-button" id="sidebarLoginBtn">Iniciar sesión</button>
+    </div>
+    <div id="sidebarFooterLogged" style="display:none">
+      <div class="user-info">Hola, <span id="usernameDisplay"></span></div>
+      <button class="auth-button" id="sidebarLogoutBtn">Cerrar sesión</button>
+    </div>
+  </div>
+</aside>
+
 <div class="container">
-  <h1>Generate Video Script</h1>
+  <div class="generator-card">
+    <div class="hero-copy">
+      <p class="hero-kicker">Generador de guiones automatizado</p>
+      <div class="hero-title-row">
+        <h1>ViralScript</h1>
+        <span class="hero-badge">IA para contenido corto</span>
+      </div>
+      <p>Crea ideas, guiones y estrategias para TikTok, Reels y Shorts en segundos.</p>
+    </div>
 
-  <input id="niche" placeholder="Niche"><br>
-  <input id="audience" placeholder="Audience"><br>
-  <input id="platform" placeholder="Platform"><br>
-  <input id="goal" placeholder="Goal"><br>
-  <input id="style" placeholder="Style"><br>
+    <div id="wizardShell" class="wizard-shell">
+      <div class="stepper" role="tablist" aria-label="Pasos del formulario">
+        <button type="button" class="step-node active" data-step="1" role="tab" aria-selected="true">
+          <span class="step-number">1</span>
+          <span class="step-label">Contexto</span>
+        </button>
+        <button type="button" class="step-node" data-step="2" role="tab" aria-selected="false">
+          <span class="step-number">2</span>
+          <span class="step-label">Estilo</span>
+        </button>
+        <button type="button" class="step-node" data-step="3" role="tab" aria-selected="false">
+          <span class="step-number">3</span>
+          <span class="step-label">Objetivo</span>
+        </button>
+      </div>
 
-  <button onclick="generate()">Generate Script</button>
+      <div class="steps-viewport">
+        <div id="stepsTrack" class="steps-track">
+          <section class="step-panel" data-step="1" aria-labelledby="step-contexto">
+            <div class="panel-inner">
+              <div class="section-head">
+                <h2 id="step-contexto">1. Contexto del contenido</h2>
+                <p>Define nicho, audiencia y condiciones para aterrizar ideas más accionables.</p>
+              </div>
+              <div class="fields-grid">
+                <div class="field-group">
+                  <label for="niche">Nicho</label>
+                  <input class="input" id="niche" placeholder="Ej. Fitness para mamás ocupadas">
+                </div>
 
-  <pre id="result"></pre>
+                <div class="field-group">
+                  <label for="audience">Audiencia</label>
+                  <input class="input" id="audience" placeholder="Ej. Mujeres 25-40 que entrenan en casa">
+                </div>
+
+                <div class="field-group">
+                  <label for="dominantType">Tipo dominante</label>
+                  <select class="input" id="dominantType">
+                    <option value="auto">Auto (determinar)</option>
+                    <option value="entretenimiento">Entretenimiento</option>
+                    <option value="educativo">Educativo</option>
+                    <option value="híbrido">Híbrido</option>
+                  </select>
+                </div>
+
+                <div class="field-group">
+                  <label for="offer">Oferta</label>
+                  <input class="input" id="offer" placeholder="Oferta (ej. curso / no aplica)">
+                </div>
+
+                <div class="field-group">
+                  <label for="situations">Situaciones</label>
+                  <input class="input" id="situations" placeholder="Problemas o contexto habitual de tu audiencia">
+                </div>
+
+                <div class="field-group">
+                  <label for="desiredResult">Resultado deseado</label>
+                  <input class="input" id="desiredResult" placeholder="Qué quiere conseguir o sentir la audiencia">
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-panel" data-step="2" aria-labelledby="step-estilo">
+            <div class="panel-inner">
+              <div class="section-head">
+                <h2 id="step-estilo">2. Estilo del creador</h2>
+                <p>Ajusta formato, voz y recursos para que las ideas se puedan grabar fácil.</p>
+              </div>
+              <div class="fields-grid">
+                <div class="field-group">
+                  <label for="duration">Duración</label>
+                  <input class="input" id="duration" placeholder="Ej. 30s, 45s, 60s">
+                </div>
+
+                <div class="field-group">
+                  <label for="tone">Tono</label>
+                  <input class="input" id="tone" placeholder="Ej. Cercano, directo, divertido">
+                </div>
+
+                <div class="field-group">
+                  <label for="style">Estilo</label>
+                  <input class="input" id="style" placeholder="Ej. Storytelling, tutorial, POV">
+                </div>
+
+                <div class="field-group field-full">
+                  <label for="extraContext">Notas adicionales</label>
+                  <textarea class="input" id="extraContext" rows="4" placeholder="Entorno, recursos, limitaciones, compañía, localización, etc."></textarea>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-panel" data-step="3" aria-labelledby="step-objetivo">
+            <div class="panel-inner">
+              <div class="section-head">
+                <h2 id="step-objetivo">3. Objetivo</h2>
+                <p>Prioriza objetivo, enfoque y plataforma para personalizar cada idea.</p>
+              </div>
+              <div class="fields-grid">
+                <div class="field-group field-full">
+                  <label for="objectiveSelect">Objetivo global</label>
+                  <select class="input" id="objectiveSelect">
+                    <option value="">Seleccionar</option>
+                    <option value="crecer">Crecer</option>
+                    <option value="autoridad">Autoridad</option>
+                    <option value="monetizar">Monetizar</option>
+                    <option value="comunidad">Comunidad</option>
+                  </select>
+                  <div class="tags-box">
+                    <div id="objectiveTags" class="tags" aria-live="polite"></div>
+                  </div>
+                  <div class="hint-text">El primer objetivo será prioritario. Puedes añadir secundarios para variar ángulos.</div>
+                </div>
+
+                <div class="field-group field-full">
+                  <label for="enfoque">Enfoque</label>
+                  <select class="input" id="enfoque">
+                    <option value="">Seleccionar</option>
+                    <option value="alcance">Alcance</option>
+                    <option value="valor">Valor</option>
+                    <option value="engagement">Engagement</option>
+                    <option value="conversión">Conversión</option>
+                    <option value="mixto">Mixto</option>
+                  </select>
+                  <div class="tags-box">
+                    <div id="enfoqueTags" class="tags" aria-live="polite"></div>
+                  </div>
+                  <div class="hint-text">Puedes dejar auto o definir un enfoque manual para mayor control.</div>
+                </div>
+
+                <div class="field-group field-full">
+                  <label for="platformSelect">Plataforma</label>
+                  <select class="input" id="platformSelect">
+                    <option value="">Seleccionar</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="YouTube Shorts">YouTube Shorts</option>
+                    <option value="Facebook">Facebook</option>
+                  </select>
+                  <div class="tags-box">
+                    <div id="platformTags" class="tags" aria-live="polite"></div>
+                  </div>
+                </div>
+
+                <div class="field-group field-full">
+                  <label for="numberOfIdeas">Número de ideas</label>
+                  <select class="input" id="numberOfIdeas" aria-label="Número de ideas">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <!-- small visual progress under the stepper -->
+      <div class="step-progress" aria-hidden="true">
+        <div class="step-progress-bar" id="stepProgressBar" style="width:33%"></div>
+      </div>
+    </div>
+
+    <!-- Card footer actions (fixed inside the card, aligned right) -->
+    <div class="card-actions">
+      <button id="cancelEditBtn" type="button" class="secondary" style="display:none">Cancelar edición</button>
+      <div class="wizard-actions" aria-label="Navegación del formulario">
+        <div class="wizard-actions-row step-actions" data-step="1">
+          <button type="button" class="primary" data-next-step="2">Siguiente: Estilo</button>
+        </div>
+        <div class="wizard-actions-row step-actions" data-step="2" style="display:none">
+          <button type="button" class="secondary" data-prev-step="1">Volver</button>
+          <button type="button" class="primary" data-next-step="3">Siguiente: Objetivo</button>
+        </div>
+        <div class="wizard-actions-row step-actions" data-step="3" style="display:none">
+          <button type="button" class="secondary" data-prev-step="2">Volver</button>
+          <button id="generateBtn" onclick="generate()" class="primary" aria-live="polite" aria-busy="false">
+            <span class="btn-label">Generar ideas</span>
+            <span class="btn-spinner" aria-hidden="true" style="display:none"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="scriptView" class="script-view" style="display:none;">
+      <div class="result-wrap">
+        <div class="script-actions" aria-label="Acciones del guion">
+          <button type="button" id="copyScript" class="auth-button primary">Copiar</button>
+          <button type="button" id="downloadPdf" class="auth-button secondary">Descargar PDF</button>
+          <button type="button" id="editInputs" class="auth-button secondary" onclick="enterEditInputsMode(); return false;">Editar</button>
+          <button type="button" id="toggleHtmlView" class="auth-button ghost">Ver HTML</button>
+        </div>
+        <textarea id="scriptEditor" rows="12" readonly></textarea>
+        <div id="scriptHtmlView" class="script-html-view" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="result-wrap sr-only">
+      <pre id="result"></pre>
+    </div>
+  </div>
+
+  <div id="toasts" aria-live="polite" class="toasts"></div>
+
+  <!-- Help modal -->
+  <div id="helpModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="modal-header">
+        <div class="help-icon" aria-hidden="true">?</div>
+        <div class="title" id="helpTitle">Ayuda — campos y ejemplos</div>
+        <button id="helpCloseIcon" class="modal-close" aria-label="Cerrar ayuda">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="help-content">
+          <div class="help-index" role="navigation" aria-label="Índice de ayuda">
+            <button class="help-index-item" data-key="audiencia">Audiencia</button>
+            <button class="help-index-item" data-key="nicho">Nicho</button>
+            <button class="help-index-item" data-key="tipo">Tipo dominante</button>
+            <button class="help-index-item" data-key="oferta">Oferta</button>
+            <button class="help-index-item" data-key="situaciones">Situaciones</button>
+            <button class="help-index-item" data-key="resultado">Resultado deseado</button>
+            <button class="help-index-item" data-key="duracion">Duración</button>
+            <button class="help-index-item" data-key="tono">Tono</button>
+            <button class="help-index-item" data-key="estilo">Estilo</button>
+            <button class="help-index-item" data-key="objetivo">Objetivo global</button>
+            <button class="help-index-item" data-key="enfoque">Enfoque</button>
+            <button class="help-index-item" data-key="plataforma">Plataforma</button>
+            <button class="help-index-item" data-key="numero">Número de ideas</button>
+          </div>
+
+          <div id="helpDetails" class="help-details"></div>
+
+          <!-- Hidden templates for each help section -->
+          <div id="help-templates" style="display:none">
+            <div id="t-audiencia">
+              <h4>Audiencia</h4>
+              <p>Describe a la persona a la que te diriges: edad, género, nivel de conocimiento, intereses y contexto.</p>
+              <ul>
+                <li>"Mujeres 25-34, ocupadas, buscan rutinas de 15 minutos"</li>
+                <li>"Emprendedores locales que quieren aumentar clientes"</li>
+                <li>"Padres primerizos interesados en consejos prácticos"</li>
+              </ul>
+            </div>
+            <div id="t-nicho"><h4>Nicho</h4><p>Tema principal del creador. Ej: "Fitness para principiantes", "Marketing digital para pymes".</p></div>
+            <div id="t-tipo"><h4>Tipo dominante</h4><p>El enfoque mayoritario del contenido. Ej: "ENTRETENIMIENTO" (trends, humor), "EDUCATIVO" (tutoriales), "HÍBRIDO" (mezcla).</p></div>
+            <div id="t-oferta"><h4>Oferta</h4><p>Si hay un producto/servicio a promover. Ej: "curso de 4 semanas" o "no aplica" si no hay oferta.</p></div>
+            <div id="t-situaciones"><h4>Situaciones</h4><p>Problemas o contextos de la audiencia. Ej: "falta de tiempo para entrenar", "dudas al crear campañas".</p></div>
+            <div id="t-resultado"><h4>Resultado deseado</h4><p>Qué quiere sentir/alcanzar la audiencia. Ej: "perder 3kg en un mes" o "aumentar visitas".</p></div>
+            <div id="t-duracion"><h4>Duración</h4><p>Duración objetivo del video. Ej: "15s", "45s", "60s".</p></div>
+            <div id="t-tono"><h4>Tono</h4><p>Voz del creador. Ej: "cercano", "experto", "divertido", "directo".</p></div>
+            <div id="t-estilo"><h4>Estilo</h4><p>Formato creativo. Ej: "storytelling", "educativo", "dinámico".</p></div>
+            <div id="t-objetivo"><h4>Objetivo global</h4><p>Meta principal. Para videos cortos, es mejor seleccionar solo 1; el primer objetivo será el prioritario.</p>
+              <div class="objective-cards">
+                <div class="objective-card" data-key="crecer"><div class="oc-icon">📈</div><div class="oc-body"><div class="oc-title">Crecer</div><div class="oc-desc">Aumentar alcance, vistas y seguidores. Ideal para hooks y contenidos virales que inciten a seguir y compartir.</div></div></div>
+                <div class="objective-card" data-key="autoridad"><div class="oc-icon">🏅</div><div class="oc-body"><div class="oc-title">Autoridad</div><div class="oc-desc">Posicionar al creador como experto con contenido de valor, pruebas sociales y explicaciones claras.</div></div></div>
+                <div class="objective-card" data-key="monetizar"><div class="oc-icon">💸</div><div class="oc-body"><div class="oc-title">Monetizar</div><div class="oc-desc">Contenido orientado a ventas o conversiones con CTA claro (promociones, demos, testimonios).</div></div></div>
+                <div class="objective-card" data-key="comunidad"><div class="oc-icon">🤝</div><div class="oc-body"><div class="oc-title">Comunidad</div><div class="oc-desc">Fomentar interacción y fidelidad: preguntas, retos, debates y llamadas a la acción que invitan a participar.</div></div></div>
+              </div>
+            </div>
+            <div id="t-enfoque"><h4>Enfoque</h4><p>Tipo de contenido por idea. Ejemplos:</p><ul><li><strong>Alcance:</strong> Contenido con hook fuerte para maximizar vistas (trends, retos, curiosidades).</li><li><strong>Valor:</strong> Mini-lecciones, hacks o consejos prácticos que enseñen algo útil.</li><li><strong>Engagement:</strong> Contenido que invite a comentar/compartir (preguntas, debates, desafíos).</li><li><strong>Conversión:</strong> Contenidos orientados a llevar a una acción (venta, registro, clic) con CTA claro.</li><li><strong>Mixto:</strong> Alterna formatos de valor y alcance según la idea.</li><li><strong>Auto:</strong> El sistema detectará el enfoque más apropiado según nicho y objetivo.</li></ul></div>
+            <div id="t-plataforma"><h4>Plataforma</h4><p>Donde se publicará (TikTok, Instagram, YouTube Shorts).</p></div>
+            <div id="t-numero"><h4>Número de ideas</h4><p>Cuántas variaciones quieres generar.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="helpClose" class="auth-button">Cerrar</button>
+      </div>
+    </div>
+  </div>
 </div>
+</div>
+<!-- jsPDF (PDF export). If offline, the app will fallback to print-to-PDF. -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <script src="../js/app.js"></script>
 
@@ -63,11 +351,25 @@
     <h3 id="unsavedTitle">Vas a perder el guión actual</h3>
     <p>Si no inicias sesión, el guión actual no se guardará. Inicia sesión para conservarlo. ¿No tienes cuenta? Regístrate.</p>
     <div class="actions">
-      <button id="modalRegister" class="auth-button">Regístrate</button>
-      <button id="modalLogin" class="auth-button">Iniciar sesión</button>
-      <button id="modalDiscard" class="auth-button secondary">Descartar y continuar</button>
+      <button id="modalLogin" class="auth-button primary">Iniciar sesión</button>
+      <button id="modalRegister" class="auth-button secondary">Registrarse</button>
+      <button id="modalDiscard" class="auth-button ghost">Descartar y continuar</button>
     </div>
   </div>
 </div>
+
+<div id="logoutConfirmModal" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="logoutConfirmTitle">
+    <h3 id="logoutConfirmTitle">¿Cerrar sesión?</h3>
+    <p>Tu sesión actual se cerrará. Podrás volver a acceder iniciando sesión de nuevo.</p>
+    <div class="actions">
+      <button id="cancelLogoutBtn" class="auth-button secondary">Cancelar</button>
+      <button id="confirmLogoutBtn" class="auth-button danger">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+  <!-- Help button -->
+  <button id="helpBtn" class="help-button" aria-haspopup="dialog" aria-controls="helpModal">Ayuda</button>
 </body>
 </html>

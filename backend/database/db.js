@@ -1,10 +1,18 @@
 import sqlite3 from "sqlite3"
 import { open } from "sqlite"
+import path from "path"
+import { fileURLToPath } from "url"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export async function initDB() {
+  const dbFilePath = process.env.DATABASE_PATH
+    ? path.resolve(process.env.DATABASE_PATH)
+    : path.join(__dirname, "content.db")
 
   const db = await open({
-    filename: "./database/content.db",
+    filename: dbFilePath,
     driver: sqlite3.Database
   })
 

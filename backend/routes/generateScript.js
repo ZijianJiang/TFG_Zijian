@@ -1,5 +1,6 @@
 import express from "express"
 import { generateContent } from "../services/openaiService.js"
+import { streamContent } from "../services/openaiService.js"
 import { buildPrompt } from "../prompts/scriptPrompt.js"
 
 export default function generateScript(db){
@@ -54,6 +55,33 @@ export default function generateScript(db){
       res.status(500).json({
         error: error.message
       })
+    }
+  })
+
+  // Streaming endpoint: returns a text/event-stream-like streaming response
+  router.post('/stream', async (req, res) => {
+    try {
+      // set headers for streaming plaintext (we'll use chunked responses)
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+      res.setHeader('Cache-Control', 'no-cache')
+      res.setHeader('X-Accel-Buffering', 'no')
+
+      const prompt = buildPrompt(req.body)
+
+      // write initial newline to open the stream in some clients
+      res.write('\n')
+
+      await streamContent(prompt, (chunk) => {
+        // write chunks as they arrive
+        try { res.write(chunk) } catch (e) { /* ignore write errors */ }
+      })
+
+      // end of stream
+      res.end()
+
+    } catch (error) {
+      console.error('STREAM ERROR', error)
+      try { res.status(500).json({ error: error.message }) } catch (e) { }
     }
   })
 

@@ -1,6 +1,8 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
+import path from "path"
+import { fileURLToPath } from "url"
 import generateScript from "./routes/generateScript.js"
 import authRoute from "./routes/auth.js"
 import { initDB } from "./database/db.js"
@@ -8,6 +10,10 @@ import { initDB } from "./database/db.js"
 dotenv.config()
 
 const app = express()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const frontendDir = path.resolve(__dirname, "../frontend")
+const port = Number(process.env.PORT) || 3000
 
 app.use(cors())
 app.use(express.json())
@@ -17,6 +23,17 @@ const db = await initDB()
 app.use("/generate-script", generateScript(db))
 app.use("/auth", authRoute(db))
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000")
+// Serve the static frontend from the same origin in production deployments.
+app.use(express.static(frontendDir))
+
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(frontendDir, "pages", "home.html"))
+})
+
+app.get("/health", (_req, res) => {
+  res.json({ ok: true })
+})
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`)
 })
