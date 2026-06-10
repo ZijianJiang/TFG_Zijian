@@ -9,7 +9,9 @@ const __dirname = path.dirname(__filename)
 export async function initDB() {
   const dbFilePath = process.env.DATABASE_PATH
     ? path.resolve(process.env.DATABASE_PATH)
-    : path.join(__dirname, "content.db")
+    : process.env.NODE_ENV === 'production'
+      ? path.join('/tmp', 'content.db')
+      : path.join(__dirname, "content.db")
 
   const db = await open({
     filename: dbFilePath,

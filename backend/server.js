@@ -14,8 +14,19 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const frontendDir = path.resolve(__dirname, "../frontend")
 const port = Number(process.env.PORT) || 3000
+const allowedOrigins = new Set(
+  [process.env.FRONTEND_URL, process.env.PUBLIC_URL]
+    .filter(Boolean)
+    .map((value) => String(value).replace(/\/$/, ''))
+)
 
-app.use(cors())
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.size === 0 || allowedOrigins.has(origin)) return callback(null, true)
+    return callback(new Error(`CORS blocked for origin: ${origin}`))
+  }
+}))
 app.use(express.json())
 
 const db = await initDB()
