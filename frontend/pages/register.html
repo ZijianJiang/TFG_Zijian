@@ -2,35 +2,74 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Registro - AI Content Creator</title>
+  <title>Registro - ViralScript</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles/style.css">
 </head>
-<body>
-  <main style="max-width:480px;margin:80px auto;padding:20px;background:#fff;border-radius:8px;">
-    <h2>Registro</h2>
-    <div>
-      <label>Usuario</label>
-      <input id="registerUsername" placeholder="Usuario">
+<body class="auth-page">
+  <header class="header-bar">
+    <div class="left">
+      <a class="brand brand-link" href="home.html" aria-label="Volver al generador">
+        <img src="../styles/logo.svg" alt="ViralScript logo" class="sidebar-logo">
+        <div class="brand-copy">
+          <span class="app-title">ViralScript</span>
+        </div>
+      </a>
     </div>
-    <div>
-      <label>Contraseña</label>
-      <input id="registerPassword" placeholder="Contraseña" type="password">
-    </div>
-    <div style="margin-top:12px;">
-      <button id="doRegister" class="auth-button">Crear cuenta</button>
-      <a href="login.html" style="margin-left:8px;">Entrar</a>
-      <a href="home.html" style="float:right">Volver</a>
-    </div>
-    <p id="msg" style="color:red;margin-top:8px"></p>
+  </header>
+
+  <main class="auth-shell">
+    <section class="auth-card" aria-labelledby="registerTitle">
+      <div class="auth-copy">
+        <p class="auth-kicker">Empieza a crear</p>
+        <h1 id="registerTitle">Crear cuenta</h1>
+        <p class="auth-subtitle">Crea tu cuenta para guardar guiones e insights.</p>
+      </div>
+
+      <div class="auth-fields">
+        <div class="field-group auth-field">
+          <label for="registerUsername">Usuario</label>
+          <input id="registerUsername" class="input" placeholder="Usuario" autocomplete="username">
+        </div>
+
+        <div class="field-group auth-field">
+          <label for="registerPassword">Contraseña</label>
+          <input id="registerPassword" class="input" placeholder="Contraseña" type="password" autocomplete="new-password">
+        </div>
+      </div>
+
+      <div class="auth-actions">
+        <button id="doRegister" class="auth-button primary auth-submit">Crear cuenta</button>
+        <p class="auth-secondary-link">
+          ¿Ya tienes cuenta?
+          <a href="login.html">Iniciar sesión</a>
+        </p>
+        <p class="auth-secondary-link">
+          <a href="home.html">Volver al generador</a>
+        </p>
+      </div>
+
+      <p id="msg" class="auth-message" aria-live="polite"></p>
+    </section>
   </main>
 
   <script>
+    function getApiBaseUrl() {
+      if (window.__API_BASE_URL__) return String(window.__API_BASE_URL__).replace(/\/$/, '')
+      if (window.location && window.location.protocol === 'file:') return 'http://127.0.0.1:3000'
+      if (window.location && window.location.origin && window.location.origin !== 'null') return window.location.origin.replace(/\/$/, '')
+      return 'http://127.0.0.1:3000'
+    }
+
     document.getElementById('doRegister').addEventListener('click', async () => {
       const u = document.getElementById('registerUsername').value
       const p = document.getElementById('registerPassword').value
       if (!u || !p) return document.getElementById('msg').innerText = 'Introduce usuario y contraseña'
       try {
-        const resp = await fetch('http://localhost:3000/auth/register', {
+        const resp = await fetch(`${getApiBaseUrl()}/auth/register`, {
           method: 'POST', headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ username: u, password: p })
         })
