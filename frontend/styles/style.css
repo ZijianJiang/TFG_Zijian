@@ -511,7 +511,7 @@ select { appearance: auto }
 #newScript::after {
   content: attr(data-tooltip);
   position: absolute;
-  left: 54px;
+  left: calc(100% + 12px);
   top: 50%;
   transform: translateY(-50%);
   background: #0f172a;
@@ -525,12 +525,13 @@ select { appearance: auto }
   white-space: nowrap;
   transition: opacity 160ms ease, transform 160ms ease;
   box-shadow: 0 12px 28px rgba(15,23,42,0.12);
+  z-index: 3500;
 }
 
 #newScript::before {
   content: '';
   position: absolute;
-  left: 48px;
+  left: calc(100% + 6px);
   top: 50%;
   transform: translateY(-50%);
   border-top: 6px solid transparent;
@@ -538,6 +539,7 @@ select { appearance: auto }
   border-right: 6px solid rgba(15,23,42,0.92);
   opacity: 0;
   transition: opacity 160ms ease;
+  z-index: 3500;
 }
 
 .sidebar.collapsed #newScript:hover::after,
@@ -2460,13 +2462,14 @@ select { appearance: auto }
   padding: 10px 8px;
   overflow: visible;
   transform: none !important;
+  z-index: 2800;
   transition: width 220ms ease, min-width 220ms ease, padding 220ms ease;
 }
 
 #appShell > #sidebar.sidebar.collapsed {
   width: 72px;
   min-width: 72px;
-  overflow: hidden;
+  overflow: visible;
   padding: 24px 0;
 }
 
@@ -2687,8 +2690,7 @@ body.sidebar-collapsed .container {
 
 .sidebar.collapsed #newScript::before,
 .sidebar.collapsed #newScript::after {
-  left: 50px;
-  z-index: 2700;
+  z-index: 3500;
 }
 
 .sidebar.open #newScript,
@@ -2884,7 +2886,7 @@ body.sidebar-collapsed .container {
 #sidebar.sidebar.collapsed {
   width: 72px !important;
   min-width: 72px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
 }
 
 .sidebar.collapsed .label,
